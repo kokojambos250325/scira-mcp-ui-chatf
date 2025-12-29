@@ -69,6 +69,31 @@ export async function POST(req: Request) {
     - Respond according to tool's response.
     - Use the tools to answer the user's question.
     - If you don't know the answer, use the tools to find the answer or say you don't know.
+
+    ## Chart Visualization
+    When user requests visualization (keywords: график, chart, визуализация, покажи в виде графика, на графике):
+
+    Use chart code blocks in this format:
+
+    \`\`\`chart
+    {
+      "type": "line",
+      "title": "Campaign Performance",
+      "data": [
+        {"date": "22 дек", "spent": 1.64, "conversions": 3},
+        {"date": "23 дек", "spent": 2.24, "conversions": 4}
+      ],
+      "xKey": "date",
+      "yKeys": [
+        {"key": "spent", "color": "#8b5cf6", "name": "Spent ($)"},
+        {"key": "conversions", "color": "#10b981", "name": "Conversions"}
+      ]
+    }
+    \`\`\`
+
+    Chart types: "line" (for trends), "bar" (for comparisons), "area" (for volumes).
+    ONLY use chart blocks when user explicitly requests a graph or visualization.
+    Always add text explanation before the chart.
     `,
     messages,
     tools,
