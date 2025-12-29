@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
 import Link from "next/link";
@@ -16,12 +15,15 @@ const components: Partial<Components> = {
         React.isValidElement(child) && child.type === 'code'
     );
 
-    if (codeElement && codeElement.props.className?.includes('language-chart')) {
-      try {
-        const chartData = JSON.parse(String(codeElement.props.children));
-        return <ChartRenderer chartData={chartData} />;
-      } catch (e) {
-        console.error('Failed to parse chart data:', e);
+    if (codeElement) {
+      const codeProps = codeElement.props as { className?: string; children?: React.ReactNode };
+      if (codeProps.className?.includes('language-chart')) {
+        try {
+          const chartData = JSON.parse(String(codeProps.children));
+          return <ChartRenderer chartData={chartData} />;
+        } catch (e) {
+          console.error('Failed to parse chart data:', e);
+        }
       }
     }
 
