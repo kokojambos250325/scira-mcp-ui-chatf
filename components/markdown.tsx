@@ -1,19 +1,49 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+"use client";
+
 import Link from "next/link";
 import React, { memo } from "react";
 import ReactMarkdown, { type Components } from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { cn } from "@/lib/utils";
+import { ChartRenderer } from "./chart-renderer";
 
 const components: Partial<Components> = {
-  pre: ({ children, ...props }) => (
-    <pre className="overflow-x-auto rounded-lg bg-zinc-100 dark:bg-zinc-800/50 ocean:bg-zinc-800/50 black:bg-zinc-800/50 p-2.5 my-1.5 text-sm" {...props}>
-      {children}
-    </pre>
-  ),
+  pre: ({ children, ...props }) => {
+    // Try to extract chart data from code block
+    const codeElement = React.Children.toArray(children).find(
+      (child): child is React.ReactElement =>
+        React.isValidElement(child) && child.type === 'code'
+    );
+
+    if (codeElement && codeElement.props.className?.includes('language-chart')) {
+      try {
+        const chartData = JSON.parse(String(codeElement.props.children));
+        return <ChartRenderer chartData={chartData} />;
+      } catch (e) {
+        console.error('Failed to parse chart data:', e);
+      }
+    }
+
+    return (
+      <pre className="overflow-x-auto rounded-lg bg-zinc-100 dark:bg-zinc-800/50 ocean:bg-zinc-800/50 black:bg-zinc-800/50 p-2.5 my-1.5 text-sm" {...props}>
+        {children}
+      </pre>
+    );
+  },
   code: ({ children, className, ...props }: React.HTMLProps<HTMLElement> & { className?: string }) => {
     const match = /language-(\w+)/.exec(className || '');
     const isInline = !match && !className;
+
+    // Check if this is a chart block
+    if (match && match[1] === 'chart') {
+      // This will be handled by the pre component
+      return (
+        <code className={className} {...props}>
+          {children}
+        </code>
+      );
+    }
 
     if (isInline) {
       return (
