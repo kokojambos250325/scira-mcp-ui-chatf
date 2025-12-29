@@ -37,7 +37,6 @@ export function ChartRenderer({ chartData }: ChartRendererProps) {
 
   const renderChart = () => {
     const commonProps = {
-      width: '100%',
       height: 400,
       data,
       margin: { top: 10, right: 30, left: 0, bottom: 0 },
